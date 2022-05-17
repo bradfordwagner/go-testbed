@@ -12,5 +12,19 @@ func main() {
 	loc := time.UTC
 	l.Info("locale: ", loc.String())
 
-	cron.New()
+	c := cron.New(cron.WithLocation(loc))
+	_, err := c.AddJob("* * * * *", job{})
+	if err != nil {
+		l.WithError(err).Error("failed to add cron")
+	}
+	c.Run()
 }
+
+type job struct {
+}
+
+func (j job) Run() {
+	logrus.Info("doing the things!")
+}
+
+var _ cron.Job = (*job)(nil)
