@@ -1,18 +1,16 @@
 package main
 
-import "github.com/sirupsen/logrus"
+import (
+	"github.com/robfig/cron/v3"
+	"github.com/sirupsen/logrus"
+	"time"
+)
 
 func main() {
 	l := logrus.New()
 
-	m := map[string]string{
-		"a": "a",
-	}
+	loc := time.UTC
+	l.Info("locale: ", loc.String())
 
-	l.Info("map: ", m)
-
-	delete(m, "b")
-
-	l.Info("map: ", m)
-
+	cron.New()
 }

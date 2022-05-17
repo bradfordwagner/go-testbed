@@ -1,0 +1,3 @@
+mode: atomic
+testbed/internal/private_mock.go:6.41,8.2 1 1
+testbed/internal/private_mock.go:10.43,12.2 1 1
