@@ -5,6 +5,7 @@ go 1.18
 require github.com/sirupsen/logrus v1.8.1
 
 require (
+	github.com/avast/retry-go/v4 v4.1.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/nxadm/tail v1.4.8 // indirect

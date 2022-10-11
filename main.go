@@ -1,7 +1,8 @@
 package main
 
 import (
-	"github.com/robfig/cron/v3"
+	"errors"
+	"github.com/avast/retry-go/v4"
 	"github.com/sirupsen/logrus"
 	"time"
 )
@@ -9,22 +10,13 @@ import (
 func main() {
 	l := logrus.New()
 
-	loc := time.UTC
-	l.Info("locale: ", loc.String())
+	err := retry.Do(func() error {
+		l.Info("hi")
+		return errors.New("i am a bad error")
+	}, retry.DelayType(retry.BackOffDelay), retry.MaxDelay(time.Second*5), retry.Attempts(5), retry.LastErrorOnly(true))
 
-	c := cron.New(cron.WithLocation(loc))
-	_, err := c.AddJob("* * * * *", job{})
 	if err != nil {
-		l.WithError(err).Error("failed to add cron")
+		l.WithError(err).Error("received error at end-step")
 	}
-	c.Run()
-}
 
-type job struct {
 }
-
-func (j job) Run() {
-	logrus.Info("doing the things!")
-}
-
-var _ cron.Job = (*job)(nil)
