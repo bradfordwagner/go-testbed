@@ -1,22 +1,30 @@
 package main
 
 import (
-	"errors"
-	"github.com/avast/retry-go/v4"
-	"github.com/sirupsen/logrus"
-	"time"
+	"context"
+	"encoding/json"
+	"github.com/bradfordwagner/go-util/log"
+	"github.com/hashicorp/vault-client-go"
 )
 
 func main() {
-	l := logrus.New()
+	l := log.Log()
+	vaultClient, err := vault.New(
+		vault.WithEnvironment(),
+	)
 
-	err := retry.Do(func() error {
-		l.Info("hi")
-		return errors.New("i am a bad error")
-	}, retry.DelayType(retry.BackOffDelay), retry.MaxDelay(time.Second*5), retry.Attempts(5), retry.LastErrorOnly(true))
-
+	healthStatus, err := vaultClient.System.ReadHealthStatus(context.Background())
 	if err != nil {
-		l.WithError(err).Error("received error at end-step")
+		l.With("error", err).Error("failed to read health status")
+		return
+	}
+	// Convert healthStatus to pretty-printed JSON
+	prettyJSON, err := json.MarshalIndent(healthStatus.Data, "", "  ")
+	if err != nil {
+		l.With("error", err).Error("failed to marshal health status to JSON")
+		return
 	}
 
+	// Print the status
+	l.Infof("Vault health status: \n%s", string(prettyJSON))
 }
